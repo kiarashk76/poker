@@ -13,18 +13,34 @@ class ModifiedEnvironment():
     
     def set_agents(self, agents_lst):
         self.env.set_agents(agents_lst)
-    
+
     def reset(self):
+        self.env = rlcard.make('limit-holdem', 
+                                {"game_num_players": self.num_in_game_players})
         self.env.reset()
 
+    @property 
+    def num_in_game_players(self):
+        counter = 0
+        for i in range(len(self.all_money)):
+            if self.all_money[i] > 0:
+                counter += 1
+        return counter
+
+    def update_money(self, payoffs):
+        counter = 0
+        for i in range(len(self.all_money)):
+            if self.all_money[i] > 0:
+                self.all_money[i] += payoffs[counter] * self.big_blind
+                counter += 1
+            
+    
     def step(self, action):
         self.env.step(action)
         if self.env.is_over():
             payoffs = self.env.get_payoffs()
-            for i in range(len(self.all_money)):
-                self.all_money[i] += payoffs[i] * self.big_blind
-            
-            self.env.reset()
+            self.update_money(payoffs)
+            self.reset()
     
     def get_state(self, player_id):
         state = self.env.get_state(player_id)

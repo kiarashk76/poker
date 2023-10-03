@@ -2,7 +2,7 @@ import rlcard
 from agent import RandomAgent
 from env import ModifiedEnvironment
 
-env = ModifiedEnvironment(3, [100, 100, 100])
+env = ModifiedEnvironment(3, [6, 6, 6])
 agents = [RandomAgent(num_actions=env.num_actions), 
             RandomAgent(num_actions=env.num_actions),
             RandomAgent(num_actions=env.num_actions)]
@@ -15,3 +15,4 @@ while not env.is_over():
     action = curr_player.step(curr_state)
     print(f"player: {curr_player_id}, action: {action}, state: {curr_state}")
     env.step(action)
+    
