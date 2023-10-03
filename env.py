@@ -1,5 +1,4 @@
 import rlcard
-from agent import RandomAgent
 from collections import OrderedDict
 
 class ModifiedEnvironment():
