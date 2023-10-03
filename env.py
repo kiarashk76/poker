@@ -43,9 +43,16 @@ class ModifiedEnvironment():
             self.reset()
     
     def get_state(self, player_id):
-        state = self.env.get_state(player_id)
+        counter = -1
+        for i in range(len(self.all_money)):
+            if self.all_money[i] > 0:
+                counter += 1
+            if i == player_id:
+                env_id = counter
+
+        state = self.env.get_state(env_id)
         state['raw_obs']['all_money'] = self.all_money
-        state['raw_obs']['my_money'] = self.all_money[player_id]
+        state['raw_obs']['my_money'] = self.all_money[env_id]
         if state['raw_obs']['my_money'] <= 0:
             state['legal_actions'] = OrderedDict()
             state['legal_actions'][2] = None
@@ -54,14 +61,16 @@ class ModifiedEnvironment():
         return state
     
     def get_player_id(self):
-        return self.env.get_player_id()            
-    
-    def is_over(self):
-        num_lost_players = 0
+        env_id = self.env.get_player_id() 
+        counter = -1         
         for i in range(len(self.all_money)):
-            if self.all_money[i] <= 0:
-                num_lost_players +=1
-        if num_lost_players >= self.num_agents - 1:
+            if self.all_money[i] > 0:
+                counter += 1
+            if counter == env_id:
+                return i
+            
+    def is_over(self):
+        if self.num_in_game_players == 1:
             return True
         return False
     
